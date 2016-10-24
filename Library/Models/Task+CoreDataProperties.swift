@@ -1,9 +1,9 @@
 import Foundation
 import CoreData
 
-extension Item {
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Item> {
-        return NSFetchRequest<Item>(entityName: Item.entityName);
+extension Task {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Task> {
+        return NSFetchRequest<Task>(entityName: Task.entityName);
     }
 
     @NSManaged public var id: String

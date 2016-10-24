@@ -5,7 +5,7 @@ class AppDelegate: UIResponder {
     var window: UIWindow?
 
     lazy var fetcher: Fetcher = {
-        let fetcher = Fetcher(baseURL: "https://server.com", modelName: "DataModel")
+        let fetcher = Fetcher(modelName: "DataModel")
 
         return fetcher
     }()
@@ -16,7 +16,8 @@ extension AppDelegate: UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         guard let window = self.window else { fatalError("Window not found") }
 
-        window.rootViewController = ItemsController(fetcher: self.fetcher)
+        let navigationController = UINavigationController(rootViewController: ItemsController(fetcher: self.fetcher))
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
 
         return true

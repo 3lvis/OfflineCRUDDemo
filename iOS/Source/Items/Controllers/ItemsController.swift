@@ -1,55 +1,65 @@
 import UIKit
+import DATASource
 
-class ItemsController: UIViewController {
+class ItemsController: UITableViewController {
     var fetcher: Fetcher
-    open var tableView: UITableView
 
-    var cellIdentifier: String {
-        return String(describing: UITableViewCell.self)
-    }
+    let cellIdentifier = String(describing: UITableViewCell.self)
 
-    public init(style: UITableViewStyle = .plain, fetcher: Fetcher) {
+    lazy var dataSource: DATASource = {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Item")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdDate", ascending: true)]
+        let dataSource = DATASource(tableView: self.tableView!, cellIdentifier: self.cellIdentifier, fetchRequest: fetchRequest, mainContext: self.fetcher.userInterfaceContext) { cell, item, indexPath in
+            let cell = cell as! ItemCell
+            let item = item as! Item
+            cell.item = item
+        }
+
+        return dataSource
+    }()
+
+    init(style: UITableViewStyle = .plain, fetcher: Fetcher) {
         self.fetcher = fetcher
-
-        let view = UITableView(frame: .zero, style: style)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        self.tableView = view
 
         super.init(nibName: nil, bundle: nil)
     }
 
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    open override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.addSubview(self.tableView)
-        self.addConstraints()
+        self.tableView.dataSource = self.dataSource
+        self.tableView.register(ItemCell.self, forCellReuseIdentifier: self.cellIdentifier)
 
-        self.tableView.dataSource = self
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellIdentifier)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addItem))
     }
 
-    func addConstraints() {
-        let anchors = [self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor), self.tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor), self.tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor), self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)]
-        for anchor in anchors {
-            anchor.priority = UILayoutPriorityDefaultLow
-            anchor.isActive = true
+    func addItem() {
+        let alertController = UIAlertController(title: "Task title", message: nil, preferredStyle: .alert)
+
+        alertController.addTextField { textField in
+            textField.placeholder = "Task title"
+            textField.clearButtonMode = .always
         }
+
+        let saveAction = UIAlertAction(title: "Save", style: .default) { alert in
+            let albumTitleTextField = alertController.textFields![0] as UITextField
+            let albumTitle = albumTitleTextField.text ?? ""
+            self.fetcher.addItem(named: albumTitle)
+        }
+        alertController.addAction(saveAction)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertController.preferredAction = saveAction
+
+        self.present(alertController, animated: true, completion: nil)
     }
-}
 
-extension ItemsController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = "Hi there"
-
-        return cell
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = self.dataSource.object(indexPath) as! Item
+        self.fetcher.toggleCompleted(item: item)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

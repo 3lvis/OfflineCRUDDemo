@@ -46,9 +46,9 @@ class ItemsController: UITableViewController {
         }
 
         let saveAction = UIAlertAction(title: "Save", style: .default) { alert in
-            let albumTitleTextField = alertController.textFields![0] as UITextField
-            let albumTitle = albumTitleTextField.text ?? ""
-            self.fetcher.addItem(named: albumTitle)
+            let titleTextField = alertController.textFields![0] as UITextField
+            let taskName = titleTextField.text ?? ""
+            self.fetcher.addItem(named: taskName)
         }
         alertController.addAction(saveAction)
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -60,6 +60,7 @@ class ItemsController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = self.dataSource.object(indexPath) as! Item
         self.fetcher.toggleCompleted(item: item)
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

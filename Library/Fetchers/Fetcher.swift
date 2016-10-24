@@ -27,4 +27,15 @@ class Fetcher {
             try! backgroundContext.save()
         }
     }
+
+    func toggleCompleted(item: Item) {
+        self.dataStack.performInNewBackgroundContext { backgroundContext in
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Item")
+            request.predicate = NSPredicate(format: "id == %@", item.id)
+            let item = try! backgroundContext.fetch(request).first as! Item
+            item.completed = !item.completed
+
+            try! backgroundContext.save()
+        }
+    }
 }

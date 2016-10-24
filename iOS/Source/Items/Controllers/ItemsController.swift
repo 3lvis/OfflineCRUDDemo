@@ -56,4 +56,10 @@ class ItemsController: UITableViewController {
 
         self.present(alertController, animated: true, completion: nil)
     }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = self.dataSource.object(indexPath) as! Item
+        self.fetcher.toggleCompleted(item: item)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }

@@ -3,7 +3,10 @@ import UIKit
 class ItemCell: UITableViewCell {
     var item: Item? {
         didSet {
-            self.textLabel?.text = item?.name
+            self.textLabel?.text = self.item?.name
+
+            let isCompleted = self.item?.completed ?? false
+            self.accessoryType = isCompleted ? .checkmark : .none
         }
     }
 

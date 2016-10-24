@@ -7,7 +7,15 @@ class ItemsController: UITableViewController {
     let cellIdentifier = String(describing: UITableViewCell.self)
 
     lazy var dataSource: DATASource = {
-        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Item")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdDate", ascending: true)]
+        let dataSource = DATASource(tableView: self.tableView!, cellIdentifier: self.cellIdentifier, fetchRequest: fetchRequest, mainContext: self.fetcher.userInterfaceContext) { cell, item, indexPath in
+            let cell = cell as! ItemCell
+            let item = item as! Item
+            cell.item = item
+        }
+
+        return dataSource
     }()
 
     init(style: UITableViewStyle = .plain, fetcher: Fetcher) {
@@ -23,18 +31,13 @@ class ItemsController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.tableView.dataSource = self
+        self.tableView.dataSource = self.dataSource
         self.tableView.register(ItemCell.self, forCellReuseIdentifier: self.cellIdentifier)
+
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addItem))
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdentifier, for: indexPath) as! ItemCell
-        cell.textLabel?.text = "Hi there"
-
-        return cell
+    func addItem() {
+        self.fetcher.addItem(named: "My task item")
     }
 }

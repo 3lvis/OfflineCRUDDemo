@@ -1,0 +1,2 @@
+github "SyncDB/DATASource" ~> 6.0
+github "SyncDB/Sync" ~> 2.0

@@ -1,7 +1,7 @@
 import UIKit
 
-class ItemCell: UITableViewCell {
-    var item: Item? {
+class TaskCell: UITableViewCell {
+    var item: Task? {
         didSet {
             self.textLabel?.text = self.item?.name
 

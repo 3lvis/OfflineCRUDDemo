@@ -1,17 +1,17 @@
 import UIKit
 import DATASource
 
-class ItemsController: UITableViewController {
+class TasksController: UITableViewController {
     var fetcher: Fetcher
 
     let cellIdentifier = String(describing: UITableViewCell.self)
 
     lazy var dataSource: DATASource = {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Item")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdDate", ascending: true)]
         let dataSource = DATASource(tableView: self.tableView!, cellIdentifier: self.cellIdentifier, fetchRequest: fetchRequest, mainContext: self.fetcher.userInterfaceContext) { cell, item, indexPath in
-            let cell = cell as! ItemCell
-            let item = item as! Item
+            let cell = cell as! TaskCell
+            let item = item as! Task
             cell.item = item
         }
 
@@ -32,12 +32,14 @@ class ItemsController: UITableViewController {
         super.viewDidLoad()
 
         self.tableView.dataSource = self.dataSource
-        self.tableView.register(ItemCell.self, forCellReuseIdentifier: self.cellIdentifier)
+        self.tableView.register(TaskCell.self, forCellReuseIdentifier: self.cellIdentifier)
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addItem))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTask))
+
+        self.fetcher.syncTasks()
     }
 
-    func addItem() {
+    func addTask() {
         let alertController = UIAlertController(title: "Task title", message: nil, preferredStyle: .alert)
 
         alertController.addTextField { textField in
@@ -48,7 +50,7 @@ class ItemsController: UITableViewController {
         let saveAction = UIAlertAction(title: "Save", style: .default) { alert in
             let titleTextField = alertController.textFields![0] as UITextField
             let taskName = titleTextField.text ?? ""
-            self.fetcher.addItem(named: taskName)
+            self.fetcher.addTask(named: taskName)
         }
         alertController.addAction(saveAction)
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -58,7 +60,7 @@ class ItemsController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = self.dataSource.object(indexPath) as! Item
+        let item = self.dataSource.object(indexPath) as! Task
         self.fetcher.toggleCompleted(item: item)
 
         tableView.deselectRow(at: indexPath, animated: true)

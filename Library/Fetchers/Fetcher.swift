@@ -15,25 +15,32 @@ class Fetcher {
         return self.dataStack.mainContext
     }
 
-    func addItem(named name: String) {
+    func syncTasks() {
+        let remoteJSON = try! JSON.from("remote.json") as! [[String: Any]]
+        let predicate = NSPredicate(format: "synced == true")
+        Sync.changes(remoteJSON, inEntityNamed: "Task", predicate: predicate, dataStack: self.dataStack, completion: nil)
+    }
+
+    func addTask(named name: String) {
         self.dataStack.performInNewBackgroundContext { backgroundContext in
-            let newItem = NSEntityDescription.insertNewObject(forEntityName: "Item", into: backgroundContext) as! Item
-            newItem.completed = false
-            newItem.createdDate = Date()
-            newItem.id = UUID().uuidString
-            newItem.name = name
-            newItem.synced = false
+            let newTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: backgroundContext) as! Task
+            newTask.completed = false
+            newTask.createdDate = Date()
+            newTask.id = UUID().uuidString
+            newTask.name = name
+            newTask.synced = false
 
             try! backgroundContext.save()
         }
     }
 
-    func toggleCompleted(item: Item) {
+    func toggleCompleted(item: Task) {
         self.dataStack.performInNewBackgroundContext { backgroundContext in
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Item")
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
             request.predicate = NSPredicate(format: "id == %@", item.id)
-            let item = try! backgroundContext.fetch(request).first as! Item
+            let item = try! backgroundContext.fetch(request).first as! Task
             item.completed = !item.completed
+            item.synced = false
 
             try! backgroundContext.save()
         }

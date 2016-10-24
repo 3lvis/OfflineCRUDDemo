@@ -38,6 +38,22 @@ class ItemsController: UITableViewController {
     }
 
     func addItem() {
-        self.fetcher.addItem(named: "My task item")
+        let alertController = UIAlertController(title: "Task title", message: nil, preferredStyle: .alert)
+
+        alertController.addTextField { textField in
+            textField.placeholder = "Task title"
+            textField.clearButtonMode = .always
+        }
+
+        let saveAction = UIAlertAction(title: "Save", style: .default) { alert in
+            let albumTitleTextField = alertController.textFields![0] as UITextField
+            let albumTitle = albumTitleTextField.text ?? ""
+            self.fetcher.addItem(named: albumTitle)
+        }
+        alertController.addAction(saveAction)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertController.preferredAction = saveAction
+
+        self.present(alertController, animated: true, completion: nil)
     }
 }

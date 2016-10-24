@@ -15,6 +15,10 @@ class Fetcher {
         return self.dataStack.mainContext
     }
 
+    // Syncs all the tasks that have the synced flag as true.
+    // In Core Data we've set synced to be true by default so all remote items will be inserted as synced == true.
+    // The problem here is that if we mark "Server task 1" as completed, it will be marked as synced == false, then in the next Sync
+    // "Server task 1" will be inserted again. Which is dumb.
     func syncTasks() {
         let remoteJSON = try! JSON.from("remote.json") as! [[String: Any]]
         let predicate = NSPredicate(format: "synced == true")

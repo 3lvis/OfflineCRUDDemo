@@ -6,7 +6,8 @@ extension Task {
         return NSFetchRequest<Task>(entityName: Task.entityName);
     }
 
-    @NSManaged public var id: String
+    @NSManaged public var remoteID: String?
+    @NSManaged public var localID: String
     @NSManaged public var name: String
     @NSManaged public var completed: Bool
     @NSManaged public var createdDate: Date

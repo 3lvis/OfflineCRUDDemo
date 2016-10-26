@@ -37,8 +37,8 @@ class TasksController: UITableViewController {
         self.tableView.dataSource = self.dataSource
         self.tableView.register(TaskCell.self, forCellReuseIdentifier: self.cellIdentifier)
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTask))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.addTask))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.edit))
 
         self.fetcher.syncTasks()
     }
@@ -89,9 +89,5 @@ class TasksController: UITableViewController {
 extension TasksController: DATASourceDelegate {
     func dataSource(_ dataSource: DATASource, tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool {
         return true
-    }
-
-    // This doesn't seem to be needed when implementing tableView(_:editActionsForRowAtIndexPath).
-    func dataSource(_ dataSource: DATASource, tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
     }
 }

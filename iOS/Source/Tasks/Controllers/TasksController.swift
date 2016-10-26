@@ -8,12 +8,15 @@ class TasksController: UITableViewController {
 
     lazy var dataSource: DATASource = {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        fetchRequest.predicate = NSPredicate(format: "offlineDeleted == false")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdDate", ascending: true)]
         let dataSource = DATASource(tableView: self.tableView!, cellIdentifier: self.cellIdentifier, fetchRequest: fetchRequest, mainContext: self.fetcher.userInterfaceContext) { cell, item, indexPath in
             let cell = cell as! TaskCell
             let item = item as! Task
             cell.item = item
         }
+
+        dataSource.delegate = self
 
         return dataSource
     }()
@@ -35,8 +38,13 @@ class TasksController: UITableViewController {
         self.tableView.register(TaskCell.self, forCellReuseIdentifier: self.cellIdentifier)
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTask))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
 
         self.fetcher.syncTasks()
+    }
+
+    func edit() {
+        self.setEditing(!self.isEditing, animated: true)
     }
 
     func addTask() {
@@ -64,5 +72,26 @@ class TasksController: UITableViewController {
         self.fetcher.toggleCompleted(item: item)
 
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let delete = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in            
+            let item = self.dataSource.objectAtIndexPath(indexPath) as! Task
+            self.fetcher.deleteTask(item: item) {
+                //...
+            }
+        }
+
+        return [delete]
+    }
+}
+
+extension TasksController: DATASourceDelegate {
+    func dataSource(_ dataSource: DATASource, tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    // This doesn't seem to be needed when implementing tableView(_:editActionsForRowAtIndexPath).
+    func dataSource(_ dataSource: DATASource, tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
     }
 }

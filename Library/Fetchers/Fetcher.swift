@@ -72,7 +72,7 @@ class Fetcher {
         }
     }
 
-    func deleteTask(item: Task, completion: () -> Void) {
+    func deleteTask(item: Task) {
         self.dataStack.performInNewBackgroundContext { backgroundContext in
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
             request.predicate = NSPredicate(format: "localID == %@", item.localID)

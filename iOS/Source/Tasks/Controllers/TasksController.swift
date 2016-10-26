@@ -77,9 +77,7 @@ class TasksController: UITableViewController {
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let delete = UITableViewRowAction(style: .default, title: "Delete") { action, indexPath in            
             let item = self.dataSource.objectAtIndexPath(indexPath) as! Task
-            self.fetcher.deleteTask(item: item) {
-                //...
-            }
+            self.fetcher.deleteTask(item: item)
         }
 
         return [delete]

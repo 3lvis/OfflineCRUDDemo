@@ -17,22 +17,31 @@ class Fetcher {
 
     func syncTasks() {
         self.submitPendingChanges {
+            // Only sync tasks that existing in the backend.
+            // The backend changes will overwrite any local state of remote items
+            // since the true lives on the backend and also because you should make
+            // sure to send your local changes to the backend before syncing the elements.
             let remoteJSON = try! JSON.from("remote.json") as! [[String: Any]]
-            let predicate = NSPredicate(format: "synced == true")
-            Sync.changes(remoteJSON, inEntityNamed: "Task", predicate: predicate, dataStack: self.dataStack, completion: nil)
+            let predicate = NSPredicate(format: "remoteID != %@", NSNull())
+            let sync = Sync(changes: remoteJSON, inEntityNamed: "Task", predicate: predicate, dataStack: self.dataStack)
+            sync.delegate = self
+            sync.start()
         }
     }
 
+    /// This is the method that you would usually call to send your local changes to the backend
+    /// if the task has a remoteID you'll update the contents in the backend, it it doesn't have a remoteID
+    /// you'll create the task in the backend. Finally if it has a "deleted" equals true, then you'll delete it
+    /// from the backend.
     func submitPendingChanges(completion: @escaping () -> Void) {
         self.dataStack.performInNewBackgroundContext { backgroundContext in
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
             request.predicate = NSPredicate(format: "synced == false")
+
+            // Create, update or delete in backend. After any of this operations
+            // are completed change the synced flag to true.
             let items = try! backgroundContext.fetch(request) as! [Task]
-            for item in items {
-                item.remoteID = UUID().uuidString
-                item.synced = true
-            }
-            try! backgroundContext.save()
+            print(items.map { $0.localID })
 
             completion()
         }
@@ -61,5 +70,14 @@ class Fetcher {
 
             try! backgroundContext.save()
         }
+    }
+}
+
+extension Fetcher: SyncDelegate {
+    func sync(_ sync: Sync, willInsert json: [String: Any], in entityNamed: String, parent: NSManagedObject?) -> [String: Any] {
+        var newJSON = json
+        newJSON["localID"] = UUID().uuidString
+
+        return newJSON
     }
 }

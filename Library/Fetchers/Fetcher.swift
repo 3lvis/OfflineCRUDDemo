@@ -1,14 +1,13 @@
 import Foundation
-import DATAStack
 import Sync
 import DATASource
 import CoreData
 
 class Fetcher {
-    var dataStack: DATAStack
+    var dataStack: DataStack
 
     init(modelName: String) {
-        self.dataStack = DATAStack(modelName: modelName)
+        self.dataStack = DataStack(modelName: modelName)
     }
 
     var userInterfaceContext: NSManagedObjectContext {

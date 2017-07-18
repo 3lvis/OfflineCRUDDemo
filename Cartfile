@@ -1,2 +1,2 @@
 github "SyncDB/DATASource" ~> 6.0
-github "SyncDB/Sync" "master"
+github "SyncDB/Sync" ~> 3.0

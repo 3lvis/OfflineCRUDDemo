@@ -8,7 +8,7 @@ All your tasks have a localID and a remoteID, the remoteID is the ID in the back
 
 ## Sync
 
-When you call Sync you'll use the following predicate to tell Sync to only insert, update and delete tasks which remoteID is different than `nil`.
+When you call Sync you'll use the following predicate to tell Sync to only insert, update and delete tasks which remoteID is different than `nil`, meaning they are remote tasks.
 
 ```swift
 let predicate = NSPredicate(format: "remoteID != %@", NSNull())

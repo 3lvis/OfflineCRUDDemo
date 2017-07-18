@@ -48,23 +48,11 @@ class TasksController: UITableViewController {
     }
 
     func addTask() {
-        let alertController = UIAlertController(title: "Task title", message: nil, preferredStyle: .alert)
-
-        alertController.addTextField { textField in
-            textField.placeholder = "Task title"
-            textField.clearButtonMode = .always
-        }
-
-        let saveAction = UIAlertAction(title: "Save", style: .default) { alert in
-            let titleTextField = alertController.textFields![0] as UITextField
-            let taskName = titleTextField.text ?? ""
-            self.fetcher.addTask(named: taskName)
-        }
-        alertController.addAction(saveAction)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alertController.preferredAction = saveAction
-
-        self.present(alertController, animated: true, completion: nil)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .medium
+        let date = dateFormatter.string(from: Date())
+        self.fetcher.addTask(named: "Local task " + date)
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -13,6 +13,6 @@ extension Task {
     @NSManaged public var createdDate: Date
     @NSManaged public var synced: Bool
 
-    // Can't be called "deleted" because there's already a variable with that name.
-    @NSManaged public var offlineDeleted: Bool
+    // Can't be called "deleted" because there's already a variable with that name in the system.
+    @NSManaged public var deletedLocally: Bool
 }

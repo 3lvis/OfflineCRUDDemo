@@ -76,7 +76,7 @@ class Fetcher {
             let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
             request.predicate = NSPredicate(format: "localID == %@", item.localID)
             let item = try! backgroundContext.fetch(request).first as! Task
-            item.offlineDeleted = true
+            item.deletedLocally = true
             item.synced = false
 
             try! backgroundContext.save()

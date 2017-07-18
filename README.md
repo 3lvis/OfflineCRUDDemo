@@ -4,7 +4,7 @@ Demo on how to use Sync in an enviroment where some items would be created local
 
 It also displays how to deal with offline changes and deletions.
 
-All your tasks have a localID and a remoteID, the remoteID is the ID in the backend. Since you can create tasks without internet connection and you'll need a primary key for this tasks (to update them, deleted them and so on), then we'll have another localID.
+All your tasks have a localID and a remoteID, the remoteID is the ID in the backend. We also use a localID since you can create tasks without internet connection and you'll need a primary key for this tasks (to update them, deleted them and so on).
 
 ## Sync
 

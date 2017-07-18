@@ -17,7 +17,7 @@ sync.delegate = self
 sync.start()
 ```
 
-This wil cause all the local-only tasks to be skipped. Also we'll use the `SyncDelegate` to make sure that every inserted remote task has also a localID. We do this so it's easy to query all the tasks with a common primary key.
+This wil cause all the local-only tasks to be skipped. Also, we'll use the `SyncDelegate` to make sure that every inserted remote task has also a localID. We do this so it's easy to query all the tasks with a common primary key.
 
 ```swift
 extension Fetcher: SyncDelegate {

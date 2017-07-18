@@ -8,7 +8,7 @@ All your tasks have a localID and a remoteID, the remoteID is the ID in the back
 
 For this functionality we'll require three extra flags: 
  
-- `offlineDeleted` (Boolean): Used to track tasks that were deleted while the device didn't have internet connection.
+- `deletedLocally` (Boolean): Used to track tasks that were deleted while the device didn't have internet connection.
 - `synced` (Boolean): Used to track offline changes, such as completion or title changes.
 - `localID` (String): We need all tasks to have a unique ID, without caring if it's a remote or local task.
  
@@ -40,7 +40,7 @@ Pressing the "+" button will add a new local task. This task won't be deleted by
 Similar to the insert method with the main difference is that this updates a task instead of creating it. If the update fails it gets queued until the next sync happens.
 
 ## Delete
-
+To delete items we'll use the `deletedLocally` flag to track what item was marked for deletion and also to provide a quick user experience without loading indicators.
 
 ## Unique ID
 
